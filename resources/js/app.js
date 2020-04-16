@@ -7,10 +7,14 @@
 require("./bootstrap");
 
 window.Vue = require("vue");
+// import momentjs to format date
+import moment from "moment";
+// add vform
 import { Form, HasError, AlertError } from "vform";
 window.Form = Form;
 Vue.component(HasError.name, HasError);
 Vue.component(AlertError.name, AlertError);
+// vue router
 import VueRouter from "vue-router";
 Vue.use(VueRouter);
 let routes = [
@@ -34,6 +38,44 @@ let routes = [
 const router = new VueRouter({
     mode: "history",
     routes // short for `routes: routes`
+});
+// custom events global declaration
+window.Fun = new Vue();
+// sweet alert tools
+import Swal from "sweetalert2";
+window.Swal = Swal;
+
+// --
+const Toast = Swal.mixin({
+    toast: true,
+    position: "top-end",
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    onOpen: toast => {
+        toast.addEventListener("mouseenter", Swal.stopTimer);
+        toast.addEventListener("mouseleave", Swal.resumeTimer);
+    }
+});
+window.Toast = Toast;
+
+// vue progressbar
+import VueProgressBar from "vue-progressbar";
+
+Vue.use(VueProgressBar, {
+    color: "rgb(143, 255, 199)",
+    failedColor: "red",
+    height: "2px"
+});
+
+// global filters
+Vue.filter("capitalize", function(value) {
+    if (!value) return "";
+    value = value.toString();
+    return value.charAt(0).toUpperCase() + value.slice(1);
+});
+Vue.filter("format", function(value) {
+    return moment(value).format("MMMM Do YYYY");
 });
 
 /**
