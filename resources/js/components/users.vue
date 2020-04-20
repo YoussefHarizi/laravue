@@ -198,6 +198,7 @@ export default {
         });
     },
     addModel() {
+      this.form.clear();
       this.form.reset();
       this.editmode = false;
       $("#adduser").modal("show");

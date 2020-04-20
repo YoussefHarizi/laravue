@@ -10,6 +10,17 @@ use App\User;
 
 class UserController extends Controller
 {
+
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth:api');
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -39,6 +50,23 @@ class UserController extends Controller
         ]);
     }
 
+    public function profile()
+    {
+        return auth('api')->user();
+    }
+    public function updateProfile(Request $request)
+    {
+        $user = auth('api')->user();
+        if ($request->photo) {
+
+
+            $name = time() . '.' . explode('/', explode(':', substr($request->photo, 0, strpos($request->photo, ';')))[1])[1];
+
+            \Image::make($request->photo)->save(public_path('images/profile/') . $name);
+        }
+        return ['message' => 'update profile'];
+    }
+
     /**
      * Display the specified resource.
      *
@@ -63,7 +91,7 @@ class UserController extends Controller
         $this->validate($request, [
             'name' => 'required|string|max:100',
             'email' => 'required|unique:users,email,' . $user->id,
-            'password' => 'sometimes|required|email',
+            'password' => 'sometimes|required',
         ]);
         $user->update($request->all());
     }
