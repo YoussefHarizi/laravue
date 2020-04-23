@@ -10,7 +10,7 @@
                 <div class="text-center">
                   <img
                     class="profile-user-img img-fluid img-circle"
-                    src="images/user.png"
+                    :src="imageProfile()"
                     alt="User profile picture"
                   />
                 </div>
@@ -126,7 +126,9 @@
                             name="name"
                             v-model="form.name"
                             placeholder="Name"
+                            :class="{'is-invalid': form.errors.has('name')}"
                           />
+                          <has-error :form="form" field="name"></has-error>
                         </div>
                       </div>
                       <div class="form-group row">
@@ -139,7 +141,9 @@
                             name="email"
                             v-model="form.email"
                             placeholder="Email"
+                            :class="{'is-invalid': form.errors.has('email')}"
                           />
+                          <has-error :form="form" field="email"></has-error>
                         </div>
                       </div>
                       <div class="form-group row">
@@ -170,13 +174,15 @@
                         <label for="pwd" class="col-sm-2 col-form-label">Password(Optional)</label>
                         <div class="col-sm-10">
                           <input
-                            type="text"
+                            type="password"
                             class="form-control"
                             id="pwd"
                             name="password"
                             placeholder="Password"
                             v-model="form.password"
+                            :class="{'is-invalid': form.errors.has('password')}"
                           />
+                          <has-error :form="form" field="password"></has-error>
                         </div>
                       </div>
 
@@ -416,7 +422,15 @@ export default {
     };
   },
   methods: {
+    imageProfile() {
+      let photo =
+        this.form.photo.length > 200
+          ? this.form.photo
+          : "images/profile/" + this.form.photo;
+      return photo;
+    },
     updateProfile() {
+      this.$Progress.start();
       this.form
         .put("api/profile")
         .then(() => {
@@ -424,9 +438,10 @@ export default {
             icon: "info",
             title: "user info updated successfully"
           });
+          this.$Progress.finish();
         })
         .catch(() => {
-          Swal.fire("Failed!", "Update failed.", "warning");
+          this.$Progress.fail();
         });
     },
     updatePhoto(e) {
@@ -434,11 +449,15 @@ export default {
       let file = e.target.files[0];
       // console.log(file);
       let reader = new FileReader();
-      reader.onloadend = file => {
-        console.log("RESULT", reader.result);
-        this.form.photo = reader.result;
-      };
-      reader.readAsDataURL(file);
+      if (file["size"] < 2097152) {
+        reader.onloadend = file => {
+          console.log("RESULT", reader.result);
+          this.form.photo = reader.result;
+        };
+        reader.readAsDataURL(file);
+      } else {
+        Swal.fire("Failed!", "the size of image more then 2MB", "error");
+      }
     }
   },
   mounted() {

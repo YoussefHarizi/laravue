@@ -57,13 +57,27 @@ class UserController extends Controller
     public function updateProfile(Request $request)
     {
         $user = auth('api')->user();
-        if ($request->photo) {
-
-
+        $this->validate($request, [
+            'name' => 'required|string|max:100',
+            'email' => 'required|unique:users,email,' . $user->id,
+            'password' => 'sometimes|required|min:6',
+        ]);
+        if ($request->photo != $user->photo) {
             $name = time() . '.' . explode('/', explode(':', substr($request->photo, 0, strpos($request->photo, ';')))[1])[1];
 
             \Image::make($request->photo)->save(public_path('images/profile/') . $name);
+            $request->merge(['photo' => $name]);
+            $currentPhoto = public_path('images/profile/') . $user->photo;
+            if (file_exists($currentPhoto)) {
+                @unlink($currentPhoto);
+            }
         }
+
+        if (!empty($request->password)) {
+            $request->merge(['password' => Hash::make($request->password)]);
+        }
+        $user->update($request->all());
+
         return ['message' => 'update profile'];
     }
 
@@ -91,8 +105,11 @@ class UserController extends Controller
         $this->validate($request, [
             'name' => 'required|string|max:100',
             'email' => 'required|unique:users,email,' . $user->id,
-            'password' => 'sometimes|required',
+            'password' => 'sometimes|required|min:6',
         ]);
+        if (!empty($request->password)) {
+            $request->merge(['password' => Hash::make($request->password)]);
+        }
         $user->update($request->all());
     }
 
