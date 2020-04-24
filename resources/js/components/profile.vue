@@ -409,7 +409,6 @@
 export default {
   data() {
     return {
-      user: {},
       form: new Form({
         id: "",
         name: "",

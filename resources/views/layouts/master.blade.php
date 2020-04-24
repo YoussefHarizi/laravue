@@ -80,6 +80,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
               <p>Dashboard</p>
             </router-link>
           </li>
+          @can('isAdmin')
           <li class="nav-item has-treeview">
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-cog purple"></i>
@@ -88,6 +89,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 <i class="right fas fa-angle-left"></i>
               </p>
             </a>
+
             <ul class="nav nav-treeview">
               <li class="nav-item">
                 <router-link to="/users" class="nav-link" active-class="active" exact>
@@ -97,13 +99,17 @@ scratch. This page gets rid of all links and provides the needed markup only.
               </li>
 
             </ul>
+
           </li>
+          @endcan
           <li class="nav-item">
             <router-link to="/profile" class="nav-link" active-class="active" exact>
               <i class="nav-icon fas fa-user green"></i>
               <p>Profile</p>
             </router-link>
           </li>
+
+
           <li class="nav-item">
             <a class="nav-link" href="{{ route('logout') }}"
                 onclick="event.preventDefault();
@@ -151,6 +157,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <!-- ./wrapper -->
 
 <!-- REQUIRED SCRIPTS -->
+@auth
+    <script>
+        window.user = @json(auth()->user());
+    </script>
+@endauth
 
 <!-- AdminLTE App -->
 <script src="/js/app.js"></script>

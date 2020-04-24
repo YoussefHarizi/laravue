@@ -2399,7 +2399,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
-      user: {},
       form: new Form({
         id: "",
         name: "",
@@ -2656,10 +2655,12 @@ __webpack_require__.r(__webpack_exports__);
     loadUsers: function loadUsers() {
       var _this = this;
 
-      axios.get("api/users").then(function (_ref) {
-        var data = _ref.data;
-        _this.users = data.data;
-      });
+      if (this.$permission.isAdmin()) {
+        axios.get("api/users").then(function (_ref) {
+          var data = _ref.data;
+          _this.users = data.data;
+        });
+      }
     },
     updateUser: function updateUser() {
       this.form.put("api/users/" + this.form.id).then(function () {
@@ -60929,80 +60930,87 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "container" }, [
-    _c("div", { staticClass: "row" }, [
-      _c("div", { staticClass: "col-md-12 mt-5" }, [
-        _c("div", { staticClass: "card" }, [
-          _c("div", { staticClass: "card-header" }, [
-            _c("h3", { staticClass: "card-title" }, [_vm._v("Users List")]),
-            _vm._v(" "),
-            _c("div", { staticClass: "card-tools" }, [
-              _c(
-                "button",
-                { staticClass: "btn btn-success", on: { click: _vm.addModel } },
-                [
-                  _vm._v("\n              Add user\n              "),
-                  _c("i", { staticClass: "fas fa-user-plus fa-fw" })
-                ]
-              )
-            ])
-          ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "card-body table-responsive p-0" }, [
-            _c("table", { staticClass: "table table-hover text-nowrap" }, [
-              _vm._m(0),
+    _vm.$permission.isAdmin()
+      ? _c("div", { staticClass: "row" }, [
+          _c("div", { staticClass: "col-md-12 mt-5" }, [
+            _c("div", { staticClass: "card" }, [
+              _c("div", { staticClass: "card-header" }, [
+                _c("h3", { staticClass: "card-title" }, [_vm._v("Users List")]),
+                _vm._v(" "),
+                _c("div", { staticClass: "card-tools" }, [
+                  _c(
+                    "button",
+                    {
+                      staticClass: "btn btn-success",
+                      on: { click: _vm.addModel }
+                    },
+                    [
+                      _vm._v("\n              Add user\n              "),
+                      _c("i", { staticClass: "fas fa-user-plus fa-fw" })
+                    ]
+                  )
+                ])
+              ]),
               _vm._v(" "),
-              _c(
-                "tbody",
-                _vm._l(_vm.users, function(user) {
-                  return _c("tr", { key: user.id }, [
-                    _c("td", [_vm._v(_vm._s(user.id))]),
-                    _vm._v(" "),
-                    _c("td", [_vm._v(_vm._s(user.name))]),
-                    _vm._v(" "),
-                    _c("td", [_vm._v(_vm._s(user.email))]),
-                    _vm._v(" "),
-                    _c("td", [_vm._v(_vm._s(_vm._f("capitalize")(user.type)))]),
-                    _vm._v(" "),
-                    _c("td", [
-                      _vm._v(_vm._s(_vm._f("format")(user.created_at)))
-                    ]),
-                    _vm._v(" "),
-                    _c("td", [
-                      _c(
-                        "button",
-                        {
-                          staticClass: "btn btn-info",
-                          on: {
-                            click: function($event) {
-                              return _vm.editModel(user)
-                            }
-                          }
-                        },
-                        [_c("i", { staticClass: "fa fa-edit" })]
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "button",
-                        {
-                          staticClass: "btn btn-danger",
-                          on: {
-                            click: function($event) {
-                              return _vm.deleteUser(user.id)
-                            }
-                          }
-                        },
-                        [_c("i", { staticClass: "fa fa-trash" })]
-                      )
-                    ])
-                  ])
-                }),
-                0
-              )
+              _c("div", { staticClass: "card-body table-responsive p-0" }, [
+                _c("table", { staticClass: "table table-hover text-nowrap" }, [
+                  _vm._m(0),
+                  _vm._v(" "),
+                  _c(
+                    "tbody",
+                    _vm._l(_vm.users, function(user) {
+                      return _c("tr", { key: user.id }, [
+                        _c("td", [_vm._v(_vm._s(user.id))]),
+                        _vm._v(" "),
+                        _c("td", [_vm._v(_vm._s(user.name))]),
+                        _vm._v(" "),
+                        _c("td", [_vm._v(_vm._s(user.email))]),
+                        _vm._v(" "),
+                        _c("td", [
+                          _vm._v(_vm._s(_vm._f("capitalize")(user.type)))
+                        ]),
+                        _vm._v(" "),
+                        _c("td", [
+                          _vm._v(_vm._s(_vm._f("format")(user.created_at)))
+                        ]),
+                        _vm._v(" "),
+                        _c("td", [
+                          _c(
+                            "button",
+                            {
+                              staticClass: "btn btn-info",
+                              on: {
+                                click: function($event) {
+                                  return _vm.editModel(user)
+                                }
+                              }
+                            },
+                            [_c("i", { staticClass: "fa fa-edit" })]
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "button",
+                            {
+                              staticClass: "btn btn-danger",
+                              on: {
+                                click: function($event) {
+                                  return _vm.deleteUser(user.id)
+                                }
+                              }
+                            },
+                            [_c("i", { staticClass: "fa fa-trash" })]
+                          )
+                        ])
+                      ])
+                    }),
+                    0
+                  )
+                ])
+              ])
             ])
           ])
         ])
-      ])
-    ]),
+      : _vm._e(),
     _vm._v(" "),
     _c(
       "div",
@@ -76528,15 +76536,16 @@ module.exports = function(module) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js");
-/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var vform__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vform */ "./node_modules/vform/dist/vform.common.js");
-/* harmony import */ var vform__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(vform__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var vue_router__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vue-router */ "./node_modules/vue-router/dist/vue-router.esm.js");
-/* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
-/* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(sweetalert2__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var vue_progressbar__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! vue-progressbar */ "./node_modules/vue-progressbar/dist/vue-progressbar.js");
-/* harmony import */ var vue_progressbar__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(vue_progressbar__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _permission__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./permission */ "./resources/js/permission.js");
+/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js");
+/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var vform__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vform */ "./node_modules/vform/dist/vform.common.js");
+/* harmony import */ var vform__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(vform__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var vue_router__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! vue-router */ "./node_modules/vue-router/dist/vue-router.esm.js");
+/* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
+/* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(sweetalert2__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var vue_progressbar__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vue-progressbar */ "./node_modules/vue-progressbar/dist/vue-progressbar.js");
+/* harmony import */ var vue_progressbar__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(vue_progressbar__WEBPACK_IMPORTED_MODULE_5__);
 /**
  * First we will load all of this project's JavaScript dependencies which
  * includes Vue and other libraries. It is a great starting point when
@@ -76544,17 +76553,20 @@ __webpack_require__.r(__webpack_exports__);
  */
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
-window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js"); // import momentjs to format date
+window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js"); // import my custom class "permission" and add a prototype to use it evry where
+
+
+Vue.prototype.$permission = new _permission__WEBPACK_IMPORTED_MODULE_0__["default"](window.user); // import momentjs to format date
 
  // add vform
 
 
-window.Form = vform__WEBPACK_IMPORTED_MODULE_1__["Form"];
-Vue.component(vform__WEBPACK_IMPORTED_MODULE_1__["HasError"].name, vform__WEBPACK_IMPORTED_MODULE_1__["HasError"]);
-Vue.component(vform__WEBPACK_IMPORTED_MODULE_1__["AlertError"].name, vform__WEBPACK_IMPORTED_MODULE_1__["AlertError"]); // vue router
+window.Form = vform__WEBPACK_IMPORTED_MODULE_2__["Form"];
+Vue.component(vform__WEBPACK_IMPORTED_MODULE_2__["HasError"].name, vform__WEBPACK_IMPORTED_MODULE_2__["HasError"]);
+Vue.component(vform__WEBPACK_IMPORTED_MODULE_2__["AlertError"].name, vform__WEBPACK_IMPORTED_MODULE_2__["AlertError"]); // vue router
 
 
-Vue.use(vue_router__WEBPACK_IMPORTED_MODULE_2__["default"]);
+Vue.use(vue_router__WEBPACK_IMPORTED_MODULE_3__["default"]);
 var routes = [{
   path: "/dashboard",
   component: __webpack_require__(/*! ./components/dashboard.vue */ "./resources/js/components/dashboard.vue")["default"]
@@ -76568,7 +76580,7 @@ var routes = [{
 // You can pass in additional options here, but let's
 // keep it simple for now.
 
-var router = new vue_router__WEBPACK_IMPORTED_MODULE_2__["default"]({
+var router = new vue_router__WEBPACK_IMPORTED_MODULE_3__["default"]({
   mode: "history",
   routes: routes // short for `routes: routes`
 
@@ -76577,23 +76589,23 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_2__["default"]({
 window.Fun = new Vue(); // sweet alert tools
 
 
-window.Swal = sweetalert2__WEBPACK_IMPORTED_MODULE_3___default.a; // --
+window.Swal = sweetalert2__WEBPACK_IMPORTED_MODULE_4___default.a; // --
 
-var Toast = sweetalert2__WEBPACK_IMPORTED_MODULE_3___default.a.mixin({
+var Toast = sweetalert2__WEBPACK_IMPORTED_MODULE_4___default.a.mixin({
   toast: true,
   position: "top-end",
   showConfirmButton: false,
   timer: 3000,
   timerProgressBar: true,
   onOpen: function onOpen(toast) {
-    toast.addEventListener("mouseenter", sweetalert2__WEBPACK_IMPORTED_MODULE_3___default.a.stopTimer);
-    toast.addEventListener("mouseleave", sweetalert2__WEBPACK_IMPORTED_MODULE_3___default.a.resumeTimer);
+    toast.addEventListener("mouseenter", sweetalert2__WEBPACK_IMPORTED_MODULE_4___default.a.stopTimer);
+    toast.addEventListener("mouseleave", sweetalert2__WEBPACK_IMPORTED_MODULE_4___default.a.resumeTimer);
   }
 });
 window.Toast = Toast; // vue progressbar
 
 
-Vue.use(vue_progressbar__WEBPACK_IMPORTED_MODULE_4___default.a, {
+Vue.use(vue_progressbar__WEBPACK_IMPORTED_MODULE_5___default.a, {
   color: "rgb(143, 255, 199)",
   failedColor: "red",
   height: "2px"
@@ -76605,7 +76617,7 @@ Vue.filter("capitalize", function (value) {
   return value.charAt(0).toUpperCase() + value.slice(1);
 });
 Vue.filter("format", function (value) {
-  return moment__WEBPACK_IMPORTED_MODULE_0___default()(value).format("MMMM Do YYYY");
+  return moment__WEBPACK_IMPORTED_MODULE_1___default()(value).format("MMMM Do YYYY");
 });
 /**
  * The following block of code may be used to automatically register your
@@ -76949,6 +76961,53 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_users_vue_vue_type_template_id_702ca2cd___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_users_vue_vue_type_template_id_702ca2cd___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/permission.js":
+/*!************************************!*\
+  !*** ./resources/js/permission.js ***!
+  \************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Permission; });
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var Permission = /*#__PURE__*/function () {
+  function Permission(user) {
+    _classCallCheck(this, Permission);
+
+    this.user = user;
+  }
+
+  _createClass(Permission, [{
+    key: "isAdmin",
+    value: function isAdmin() {
+      return this.user.type == "admin";
+    }
+  }, {
+    key: "isUser",
+    value: function isUser() {
+      return this.user.type == "user";
+    }
+  }, {
+    key: "isAuthor",
+    value: function isAuthor() {
+      return this.user.type == "author";
+    }
+  }]);
+
+  return Permission;
+}();
 
 
 

@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div class="row">
+    <div class="row" v-if="$permission.isAdmin()">
       <div class="col-md-12 mt-5">
         <div class="card">
           <div class="card-header">
@@ -178,9 +178,11 @@ export default {
   },
   methods: {
     loadUsers() {
-      axios.get("api/users").then(({ data }) => {
-        this.users = data.data;
-      });
+      if (this.$permission.isAdmin()) {
+        axios.get("api/users").then(({ data }) => {
+          this.users = data.data;
+        });
+      }
     },
     updateUser() {
       this.form

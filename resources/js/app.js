@@ -7,6 +7,11 @@
 require("./bootstrap");
 
 window.Vue = require("vue");
+
+// import my custom class "permission" and add a prototype to use it evry where
+import Permission from "./permission";
+Vue.prototype.$permission = new Permission(window.user);
+
 // import momentjs to format date
 import moment from "moment";
 // add vform
