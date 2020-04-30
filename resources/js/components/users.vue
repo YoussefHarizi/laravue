@@ -1,6 +1,7 @@
 <template>
   <div class="container">
-    <div class="row" v-if="$permission.isAdmin()">
+    <not-found v-if="!$permission.isAdminOrAuthor()"></not-found>
+    <div class="row" v-if="$permission.isAdminOrAuthor()">
       <div class="col-md-12 mt-5">
         <div class="card">
           <div class="card-header">
@@ -27,7 +28,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="user in users" :key="user.id">
+                <tr v-for="user in users.data" :key="user.id">
                   <td>{{ user.id }}</td>
                   <td>{{ user.name }}</td>
                   <td>{{ user.email }}</td>
@@ -46,6 +47,9 @@
             </table>
           </div>
           <!-- /.card-body -->
+          <div class="card-footer">
+            <pagination :data="users" @pagination-change-page="getResults"></pagination>
+          </div>
         </div>
         <!-- /.card -->
       </div>
@@ -68,7 +72,7 @@
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
-          <form @submit.prevent="editmode? updateUser():createUser()">
+          <form @submit.prevent="editmode ? updateUser() : createUser()">
             <div class="modal-body">
               <div class="form-group">
                 <input
@@ -177,10 +181,17 @@ export default {
     };
   },
   methods: {
+    getResults(page = 1) {
+      if (this.$permission.isAdminOrAuthor()) {
+        axios.get("api/users?page=" + page).then(response => {
+          this.users = response.data;
+        });
+      }
+    },
     loadUsers() {
-      if (this.$permission.isAdmin()) {
+      if (this.$permission.isAdminOrAuthor()) {
         axios.get("api/users").then(({ data }) => {
-          this.users = data.data;
+          this.users = data;
         });
       }
     },
@@ -253,9 +264,20 @@ export default {
     }
   },
   created() {
-    this.loadUsers();
+    Fun.$on("searching", () => {
+      let query = this.$parent.search;
+      axios
+        .get("api/findUser?q=" + query)
+        .then(data => {
+          this.users = data.data;
+        })
+        .catch(() => {});
+    });
+    // this.loadUsers();
+    this.getResults();
     Fun.$on("refresh", () => {
-      this.loadUsers();
+      // this.loadUsers();
+      this.getResults();
     });
   }
 };

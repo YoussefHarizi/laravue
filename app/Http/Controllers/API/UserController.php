@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\UserValidation;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use App\User;
 
 class UserController extends Controller
@@ -28,8 +29,11 @@ class UserController extends Controller
      */
     public function index()
     {
-        $this->authorize('isAdmin');
-        return User::latest()->paginate(10);
+        // $this->authorize('isAdmin');
+        if (Gate::allows('isAdmin') || Gate::allows('isAuthor')) {
+
+            return User::latest()->paginate(3);
+        }
     }
 
     /**
@@ -125,5 +129,20 @@ class UserController extends Controller
         $this->authorize('isAdmin');
         $user = User::findOrFail($id);
         $user->delete();
+    }
+
+    public function search()
+    {
+
+        if ($search = \Request::get('q')) {
+            $users = User::where(function ($query) use ($search) {
+                $query->where('name', 'LIKE', "%$search%")
+                    ->orWhere('email', 'LIKE', "%$search%");
+            })->paginate(10);
+        } else {
+            $users = User::latest()->paginate(3);
+        }
+
+        return $users;
     }
 }

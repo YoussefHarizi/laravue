@@ -34,6 +34,10 @@ let routes = [
     {
         path: "/profile",
         component: require("./components/profile.vue").default
+    },
+    {
+        path: "*",
+        component: require("./components/Not-Found.vue").default
     }
 ];
 
@@ -98,6 +102,9 @@ Vue.component(
     "example-component",
     require("./components/ExampleComponent.vue").default
 );
+Vue.component("not-found", require("./components/Not-Found.vue").default);
+// add pagination
+Vue.component("pagination", require("laravel-vue-pagination"));
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -107,5 +114,13 @@ Vue.component(
 
 const app = new Vue({
     el: "#app",
-    router
+    router,
+    data: {
+        search: ""
+    },
+    methods: {
+        searchIt: _.debounce(() => {
+            Fun.$emit("searching");
+        }, 1000)
+    }
 });
